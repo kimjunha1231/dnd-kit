@@ -13,6 +13,8 @@ export function useDeepSignal<T extends object | null | undefined>(
   const tracked = useRef(new Map<string | symbol, any>());
   const forceUpdate = useForceUpdate();
 
+  // A render can track new properties without changing the target.
+  // Re-subscribe after every commit to include those properties.
   useIsomorphicLayoutEffect(() => {
     if (!target) {
       tracked.current.clear();
@@ -46,7 +48,7 @@ export function useDeepSignal<T extends object | null | undefined>(
         }
       }
     });
-  }, [target]);
+  });
 
   return useMemo(
     () =>
